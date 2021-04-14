@@ -125,23 +125,23 @@ modis_pre_path = os.path.join("cold-springs-modis-h4",
 stacked_file_path = os.path.join("C:\\Users\\bahri\\Documents\\Data\\Satellite\\MODIS\\earth-analytics\\data",
                                  os.path.dirname(modis_pre_path),
                                  "final_output",
-                                 "modis_my_rgb_01_s.tif")
+                                 "modis_band_7.tif")
 
-modis_bands_pre[0].rio.to_raster(stacked_file_path)
+modis_bands_pre[6].astype(np.int16).rio.to_raster(stacked_file_path)
 
 
-rgb_bands = [0,2,3]
+rgb_bands = [0,3,2]
 
 # Turn the data into a DataArray
 modis_rgb_xr = modis_bands_pre[rgb_bands]
 
 modis_rgb_xr.rio.to_raster(stacked_file_path)
 
-rgb =  65536/255. * modis_bands_pre[2] + 256/255. * modis_bands_pre[3] + modis_bands_pre[0]/255.
-rgb.rio.to_raster(stacked_file_path)
+# rgb =  65536/255. * modis_bands_pre[2] + 256/255. * modis_bands_pre[3] + modis_bands_pre[0]/255.
+# rgb.rio.to_raster(stacked_file_path)
 
-plt.imshow(rgb)
-
+# plt.imshow(rgb)
+'''
 modis_bands_pre_rgb = modis_bands_pre_scaled * 255.
 #HERE MIN-MAX SCALING
 modis_bands_pre_rgb_255 =  np.clip(modis_bands_pre_rgb, 0, 255)
@@ -159,20 +159,17 @@ plt.imshow(modis_rgb_255_s.astype(int))
 #plt.imsave(stacked_file_path+"modis.jpg", modis_rgb_255_vf)
 
 modis_rgb_255_vf.rio.to_raster(stacked_file_path)
+'''
 
-
-modis_bands_pre_scaled_01 =  np.clip(modis_bands_pre_scaled, 0, 1) #HERE MIN-MAX SCALING
+#modis_bands_pre_scaled_01 =  np.clip(modis_bands_pre_scaled, 0, 1)
+modis_bands_pre_scaled_01 = (modis_bands_pre_scaled-modis_bands_pre_scaled.min())/(modis_bands_pre_scaled.max()-modis_bands_pre_scaled.min()) 
 modis_rgb_01 = modis_bands_pre_scaled_01[rgb_bands]
 #modis_rgb_01.rio.to_raster(stacked_file_path)
 
 modis_rgb_01_s = np.swapaxes(modis_rgb_01, 0, 2)
 modis_rgb_01_s = np.swapaxes(modis_rgb_01_s, 0, 1)
 
-modis_rgb_01_s_temp = modis_rgb_01_s
-modis_rgb_01_s[:,:,1] = modis_rgb_01_s_temp[:,:,2]
-modis_rgb_01_s[:,:,2] = modis_rgb_01_s_temp[:,:,1]
-
-plt.imshow(modis_rgb_01_s)
+#plt.imshow(modis_rgb_01_s)
 plt.imsave(stacked_file_path+'.jpg',modis_rgb_01_s)
 #modis_rgb_01_s.rio.to_raster(stacked_file_path)
 
