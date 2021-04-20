@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 import numpy.ma as ma
 import xarray as xr
 import rioxarray as rxr
-from shapely.geometry import mapping, box
-import geopandas as gpd
-import earthpy as et
-import earthpy.plot as ep
+# from shapely.geometry import mapping, box
+# import geopandas as gpd
+# import earthpy as et
+# import earthpy.plot as ep
 import numpy as np
 from glob import glob
 
@@ -56,13 +56,10 @@ def combine_tifs(tif_list):
 
 
 # Set working directory
-os.chdir(os.path.join('/home/omar/Documents/Data/MODIS/'))
+os.chdir('/home/omar/Data/MODIS/')
 
-et.data.get_data('cold-springs-modis-h4')
+pecs_pre_path = os.path.join('Pecs', 'pecs_MOD09_08_18_11_25.hdf')
 
-pecs_pre_path = os.path.join('Pecs', 'MOD09GA.A2020226.h19v04.061.2020342081225.hdf')
-
-spring_path = 'earth-analytics/data/cold-springs-modis-h4/07_july_2016/MOD09GA.A2016189.h09v05.006.2016191073856.hdf'
 
 # Create a path to the pre-fire MODIS h4 data
 # modis_pre_path = os.path.join("'earth-analytics',
@@ -71,8 +68,7 @@ spring_path = 'earth-analytics/data/cold-springs-modis-h4/07_july_2016/MOD09GA.A
 #                               "MOD09GA.A2016189.h09v05.006.2016191073856.hdf")
 
 # Open entire data with rioxarray
-modis_pre = rxr.open_rasterio(spring_path,
-                              masked=True)
+modis_pre = rxr.open_rasterio(pecs_pre_path, masked=True)
 
 # Open just the bands that you want to process and masking the no-data values
 desired_bands = ["sur_refl_b01_1",
