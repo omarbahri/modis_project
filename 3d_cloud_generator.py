@@ -46,7 +46,6 @@ cloud_types_height = {
 }
 
 directory = "./Data/"
-height_file_name = "cloud_height"
 rain_file_name = "rain_cloud"
 ice_file_name = "ice_cloud"
 file_extension = ".vti"
@@ -76,7 +75,7 @@ CPOP_tif = Image.open(f'{directory}/mod06_CPOP.tif')
 CPOP_arr = np.array(CPOP_tif, dtype='uint16')
 
 # Initialize the ranges of the cloud elevations
-res_factor = 50
+res_factor = 500
 low_elev = (500 // res_factor, 2000 // res_factor)
 mid_elev = ((2000 // res_factor) + 1, 7000 // res_factor)
 high_elev = ((7000 // res_factor) + 1, np.amax(CTH_arr) // res_factor)
@@ -98,8 +97,24 @@ height = 0
 file_counter = 0
 while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_factor:
     # Initialize the 3D array that will hold the cloud data
-    cloud_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
-    cloud_height_arr.fill(np.nan)
+    cumulus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    cumulus_height_arr.fill(np.nan)
+    stratocumulus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    stratocumulus_height_arr.fill(np.nan)
+    stratus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    stratus_height_arr.fill(np.nan)
+    altocumulus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    altocumulus_height_arr.fill(np.nan)
+    altostratus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    altostratus_height_arr.fill(np.nan)
+    nimbostratus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    nimbostratus_height_arr.fill(np.nan)
+    cirrus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    cirrus_height_arr.fill(np.nan)
+    cirrostratus_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    cirrostratus_height_arr.fill(np.nan)
+    deep_convection_height_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
+    deep_convection_height_arr.fill(np.nan)
     ice_cloud_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
     ice_cloud_arr.fill(np.nan)
     rain_cloud_arr = np.zeros((y_dim, x_dim, z_dim), dtype='uint8')
@@ -132,7 +147,24 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
                 base_height += z_transform
                 top_height += z_transform
 
-            cloud_height_arr[y][x][base_height:top_height] = cloud_type
+            if type_and_base == "cumulus":
+                cumulus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "stratocumulus":
+                stratocumulus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "stratus":
+                stratus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "altocumulus":
+                altocumulus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "altostratus":
+                altostratus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "nimbostratus":
+                nimbostratus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "cirrus":
+                cirrus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "cirrostratus":
+                cirrostratus_height_arr[y][x][base_height:top_height] = cloud_type
+            elif type_and_base == "deep_convection":
+                deep_convection_height_arr[y][x][base_height:top_height] = cloud_type
 
             # decide if the cloud is liquid or ice
             if CPOP_arr[start_x + x][start_y + y] == 2:
@@ -141,25 +173,122 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
                 ice_cloud_arr[y][x][base_height:top_height] = 3
 
     # flip the array upside down so it renders right side up in Paraview
-    np.flipud(cloud_height_arr)
+    np.flipud(cumulus_height_arr)
+    np.flipud(stratocumulus_height_arr)
+    np.flipud(stratus_height_arr)
+    np.flipud(altocumulus_height_arr)
+    np.flipud(altostratus_height_arr)
+    np.flipud(nimbostratus_height_arr)
+    np.flipud(cirrus_height_arr)
+    np.flipud(cirrostratus_height_arr)
+    np.flipud(deep_convection_height_arr)
     np.flipud(rain_cloud_arr)
     np.flipud(ice_cloud_arr)
 
     # Basic logging information
-    print(f"Shape: {np.shape(cloud_height_arr)}")
-    print(f"Size of array in MB: {(cloud_height_arr.size * cloud_height_arr.itemsize) // 1000000}")
+    print(f"Shape: {np.shape(cumulus_height_arr)}")
+    print(f"Size of array in MB: {(cumulus_height_arr.size * cumulus_height_arr.itemsize) // 1000000}")
     end = time.time()
     print(f"Time taken to compute {end - start}")
 
     # Write the data to files
-    print(f"Writing cloud height data to file {height_file_name}{file_counter}{file_extension}")
-    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=cloud_height_arr.shape)
-    cloud_height_data.point_data.scalars = cloud_height_arr.ravel(order='F')
+    cumulus_file_name = "cumulus_height"
+    print(f"Writing cloud height data to file {cumulus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=cumulus_height_arr.shape)
+    cloud_height_data.point_data.scalars = cumulus_height_arr.ravel(order='F')
     cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
-    write_data(cloud_height_data, f"./Data/{height_file_name}{file_counter}")
-    print(f"Finished writing to {height_file_name}{file_counter}{file_extension}")
+    write_data(cloud_height_data, f"./Data/{cumulus_file_name}{file_counter}")
+    print(f"Finished writing to {cumulus_file_name}{file_counter}{file_extension}")
     if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
-        del cloud_height_arr
+        del cumulus_height_arr
+        del cloud_height_data
+
+    stratocumulus_file_name = "stratocumulus_height"
+    print(f"Writing cloud height data to file {stratocumulus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=stratocumulus_height_arr.shape)
+    cloud_height_data.point_data.scalars = stratocumulus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{stratocumulus_file_name}{file_counter}")
+    print(f"Finished writing to {stratocumulus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del stratocumulus_height_arr
+        del cloud_height_data
+
+    stratus_file_name = "stratus_height"
+    print(f"Writing cloud height data to file {stratus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=stratus_height_arr.shape)
+    cloud_height_data.point_data.scalars = stratus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{stratus_file_name}{file_counter}")
+    print(f"Finished writing to {stratus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del stratus_height_arr
+        del cloud_height_data
+
+    altocumulus_file_name = "altocumulus_height"
+    print(f"Writing cloud height data to file {altocumulus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=altocumulus_height_arr.shape)
+    cloud_height_data.point_data.scalars = altocumulus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{altocumulus_file_name}{file_counter}")
+    print(f"Finished writing to {altocumulus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del altocumulus_height_arr
+        del cloud_height_data
+
+    altostratus_file_name = "altostratus_height"
+    print(f"Writing cloud height data to file {altostratus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=altostratus_height_arr.shape)
+    cloud_height_data.point_data.scalars = altostratus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{altostratus_file_name}{file_counter}")
+    print(f"Finished writing to {altostratus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del altostratus_height_arr
+        del cloud_height_data
+
+    nimbostratus_file_name = "nimbostratus_height"
+    print(f"Writing cloud height data to file {nimbostratus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=nimbostratus_height_arr.shape)
+    cloud_height_data.point_data.scalars = nimbostratus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{nimbostratus_file_name}{file_counter}")
+    print(f"Finished writing to {nimbostratus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del nimbostratus_height_arr
+        del cloud_height_data
+
+    cirrus_file_name = "cirrus_height"
+    print(f"Writing cloud height data to file {cirrus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=cirrus_height_arr.shape)
+    cloud_height_data.point_data.scalars = cirrus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{cirrus_file_name}{file_counter}")
+    print(f"Finished writing to {cirrus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del cirrus_height_arr
+        del cloud_height_data
+
+    cirrostratus_file_name = "cirrostratus_height"
+    print(f"Writing cloud height data to file {cirrostratus_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=cirrostratus_height_arr.shape)
+    cloud_height_data.point_data.scalars = cirrostratus_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{cirrostratus_file_name}{file_counter}")
+    print(f"Finished writing to {cirrostratus_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del cirrostratus_height_arr
+        del cloud_height_data
+
+    deep_convection_file_name = "deep_convection_height"
+    print(f"Writing cloud height data to file {deep_convection_file_name}{file_counter}{file_extension}")
+    cloud_height_data = tvtk.ImageData(spacing=(1, 1, 1), origin=(0, 0, 0), dimensions=deep_convection_height_arr.shape)
+    cloud_height_data.point_data.scalars = deep_convection_height_arr.ravel(order='F')
+    cloud_height_data.point_data.scalars.name = 'Cloud_Heights'
+    write_data(cloud_height_data, f"./Data/{deep_convection_file_name}{file_counter}")
+    print(f"Finished writing to {deep_convection_file_name}{file_counter}{file_extension}")
+    if x_shrink_factor == 1 and y_shrink_factor == 1 and z_shrink_factor == 1:
+        del deep_convection_height_arr
         del cloud_height_data
 
     print(f"Writing rain cloud data to file {rain_file_name}{file_counter}{file_extension}")
