@@ -147,23 +147,23 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
                 base_height += z_transform
                 top_height += z_transform
 
-            if type_and_base == "cumulus":
+            if cloud_type == 1:
                 cumulus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "stratocumulus":
+            elif cloud_type == 2:
                 stratocumulus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "stratus":
+            elif cloud_type == 3:
                 stratus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "altocumulus":
+            elif cloud_type == 4:
                 altocumulus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "altostratus":
+            elif cloud_type == 5:
                 altostratus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "nimbostratus":
+            elif cloud_type == 6:
                 nimbostratus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "cirrus":
+            elif cloud_type == 7:
                 cirrus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "cirrostratus":
+            elif cloud_type == 8:
                 cirrostratus_height_arr[y][x][base_height:top_height] = cloud_type
-            elif type_and_base == "deep_convection":
+            elif cloud_type == 9:
                 deep_convection_height_arr[y][x][base_height:top_height] = cloud_type
 
             # decide if the cloud is liquid or ice
