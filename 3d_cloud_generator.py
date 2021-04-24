@@ -103,6 +103,8 @@ COT_arr = np.load(f'{directory}/mod06_COT.npy')
 COT_scale_factor = 0.00999999977648258
 CTP_arr = np.load(f'{directory}/mod06_CTP.npy')
 CTP_scale_factor = 0.100000001490116
+CTT_arr = np.load(f'{directory}/mod06_CTT.npy')
+CTT_scale_factor = 0.00999999977648258
 CPOP_arr = np.load(f'{directory}/mod06_CPOP.npy')
 
 # Initialize the ranges of the cloud elevations
@@ -195,8 +197,9 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
         for x in range(x_dim):
             top_height = CTH_arr[start_x + x][start_y + y] // res_factor
             opt_thickness = COT_arr[start_x + x][start_y + y] * COT_scale_factor
-            #pressure = CTP_arr[start_x + x][start_y + y] * CTP_scale_factor
-            
+            pressure = CTP_arr[start_x + x][start_y + y] * CTP_scale_factor
+            temperature = CTT_arr[start_x + x][start_y + y] * CTT_scale_factor
+
             cloud_type_name = classify_cloud(opt_thickness, top_height)
             type_and_base = cloud_types_base_heights[cloud_type_name]
             cloud_type = type_and_base[0]

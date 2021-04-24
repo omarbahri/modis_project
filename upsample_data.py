@@ -27,6 +27,9 @@ CTP_tif = Image.open(f'{directory}/mod06_CTP.tif')
 # cloud phase optical properties
 CPOP_tif = Image.open(f'{directory}/mod06_CPOP.tif')
 
+# cloud temperature
+CTT_tif = Image.open(f'{directory}/mod06_CTT.tif')
+
 # get the shape of the arrays
 width, height = CTH_tif.size 
 
@@ -45,6 +48,7 @@ CTH_cropped = CTH_tif.crop((left, top, right, bottom))
 COT_cropped = COT_tif.crop((left, top, right, bottom))
 CTP_cropped = CTP_tif.crop((left, top, right, bottom))
 CPOP_cropped = CPOP_tif.crop((left, top, right, bottom))
+CTT_cropped = CTT_tif.crop((left, top, right, bottom))
 
 width, height = CPOP_cropped.size 
 
@@ -52,6 +56,7 @@ CTH_zoomed = CTH_cropped.resize((width*upsampling_factor, height*upsampling_fact
 COT_zoomed = COT_cropped.resize((width*upsampling_factor, height*upsampling_factor))
 CTP_zoomed = CTP_cropped.resize((width*upsampling_factor, height*upsampling_factor))
 CPOP_zoomed = CPOP_cropped.resize((width*upsampling_factor, height*upsampling_factor))
+CTT_zoomed = CTT_cropped.resize((width*upsampling_factor, height*upsampling_factor))
 
 blur_sdev = 37
 
@@ -59,6 +64,7 @@ CTH_blurred = gaussian_filter(np.asarray(CTH_zoomed), sigma=blur_sdev)
 COT_blurred = gaussian_filter(np.asarray(COT_zoomed), sigma=blur_sdev)
 CTP_blurred = gaussian_filter(np.asarray(CTP_zoomed), sigma=blur_sdev)
 CPOP_blurred = gaussian_filter(np.asarray(CPOP_zoomed), sigma=blur_sdev)
+CTT_blurred = gaussian_filter(np.asarray(CTT_zoomed), sigma=blur_sdev)
 
 
 # blur and write the arrays to .npy files
@@ -66,6 +72,7 @@ np.save(f'{directory}/mod06_upsampled/mod06_CTH.npy', CTH_blurred)
 np.save(f'{directory}/mod06_upsampled/mod06_COT.npy', COT_blurred)
 np.save(f'{directory}/mod06_upsampled/mod06_CTP.npy', CTP_blurred)
 np.save(f'{directory}/mod06_upsampled/mod06_CPOP.npy', CPOP_blurred)
+np.save(f'{directory}/mod06_upsampled/mod06_CTT.npy', CTT_blurred)
 
 # load the RGB image
 rgb = Image.open(f'{directory}/rgb.jpg')
