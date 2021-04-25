@@ -37,7 +37,7 @@ width, height = CTH_tif.size
 crop_factor = 32
 upsampling_factor = 20
 
-n = 0
+n = 5
 
 left = n*width//crop_factor
 top = n*height//crop_factor

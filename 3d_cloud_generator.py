@@ -205,12 +205,14 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
             cloud_type = type_and_base[0]
             
             min_height = cloud_types_min_height[cloud_type_name][1] // res_factor
+            max_height = cloud_types_height[cloud_type_name][1] // res_factor
             
             base_height_min = type_and_base[1] // res_factor
             base_height_max = type_and_base[2] // res_factor
-            base_height = math.floor(random.uniform(min(base_height_min,top_height-min_height), min(base_height_max, top_height-min_height)))
             
-#            cloud_height = cloud_types_height[cloud_type_name][1] // res_factor
+            base_height = math.floor(random.uniform(max(base_height_min,top_height-max_height), min(base_height_max, top_height-min_height)))
+            
+            cloud_height = cloud_types_height[cloud_type_name][1] // res_factor
 #            min_base_height = cloud_types_min[cloud_type_name][1] // res_factor
             
             #The cloud height should not be larger than the maximum cloud height
@@ -440,7 +442,7 @@ while row < x_shrink_factor and col < y_shrink_factor and height < z_shrink_fact
                 else:
                     base_height_arr[y][x] = base_height
             
-            if base_height>=top_height:
+            if base_height>=top_height and top_height!=0:
                 print("ERROR: Base height cannot be greater than top height\n")
                 sys.exit()
             
