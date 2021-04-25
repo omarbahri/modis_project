@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> d7ca14f7bc1a1bd627bdbff1f392c9dc001e1956
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
