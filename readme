@@ -1,0 +1,18 @@
+Instructions to reproduce:
+
+1. In order to run the MOD09.ipynb and MOD06.ipynb files, the following environment has to be installed in the exact same way:
+  conda create -n modis python=3.6
+  conda activate modis
+  conda config --add channels conda-forge
+  conda install gdal
+  pip install rioxarray --no-binary :all:
+ 
+2. Running the MOD09.ipynb and MOD06.ipynb files will generate .tiff files containing the cloud properties from MOD06, and the RGB image from MOD09.
+
+3. Then, we need to run upsample_data.py on the previous files. This will create new cropped and upsampled .tiff files and a corresponding RGB image.
+
+4. Then, run 3d_cloud_generator.py on the files resulting from the previous step. This will create the .vti files needed for the 3D visualizations.
+
+Note: we already generated some files that you can use for the visualizations. Those are under /Data/mod06_upsampled/.
+
+5. Finally, you can use the paraview state files to create the visualizations!
